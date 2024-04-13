@@ -1,4 +1,8 @@
 # Disaster Response Pipeline Project
+There are 3 main folders in this repo,
+1. app-> it has fast api code
+2. data-> it has code related to data preprocessing
+3. models-> it has model infer code
 
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
