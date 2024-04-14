@@ -11,17 +11,16 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
 import pickle
 
 nltk.download('wordnet')
-nltk.download('stopwords')
-
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
 
 def load_data(database_filepath):
     # engine = create_engine('sqlite:///disaster_msg.db')
-    df = pd.read_sql_table('messages', 'sqlite:///'+database_filepath)
+    df = pd.read_sql_table('messages',"sqlite:///"+ database_filepath)
     X = df['message']
     y_col = [col for col in df.columns if col not in ['message','original', 'genre', 'id']]
     Y = df[y_col]
@@ -49,8 +48,12 @@ def build_model():
                                             ('vect', CountVectorizer(tokenizer= tokenize)),
                                             ('tfidf', TfidfTransformer())])),
                     ('clf', MultiOutputClassifier(RandomForestClassifier()))])
+    parameters = {'clf__estimator__n_estimators' :[50,100,150],
+                  'clf__estimator__max_depth' : [None, 5,10]}
     
-    return pipeline
+    model = GridSearchCV(pipeline, parameters, cv=5)
+
+    return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):

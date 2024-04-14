@@ -28,8 +28,14 @@ def clean_data(df):
         # set each value to be the last character of the string
         categories[column] = categories[column].astype(str).str[-1:]
         
-        # convert column from string to numeric
-        categories[column] = categories[column].astype('Int8')
+        # # convert column from string to numeric
+        # categories[column] = categories[column].astype('Int8')
+
+    #drop rows where column values are 2
+    categories = categories[categories['related']!=2]
+    
+    #convert column to bool
+    categories = categories.astype(bool)
 
     # drop the original categories column from `df`
     df = df.drop(labels=['categories'], axis=1) 
@@ -43,9 +49,8 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
- 
-    engine = create_engine('sqlite:///'+database_filename)
-    df.to_sql('messages', engine, index=False)
+    engine = create_engine('sqlite:///'+ database_filename)
+    df.to_sql('messages', engine, index=False, if_exists='replace')
 
 
 def main():
