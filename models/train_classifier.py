@@ -19,6 +19,9 @@ stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
 
 def load_data(database_filepath):
+    """Load data from sql database and create Feature and Target dataframes
+    Input: database path
+    Output: feature dataframe, target dataframe, classes"""
     # engine = create_engine('sqlite:///disaster_msg.db')
     df = pd.read_sql_table('messages',"sqlite:///"+ database_filepath)
     X = df['message']
@@ -29,6 +32,9 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """Prepross text using tokenization and lemmatization
+    Input: input text
+    Output: tokenized list of word"""
     # convert to lower case
     text = text.lower()
     # tokenization
@@ -44,6 +50,9 @@ def tokenize(text):
 
 
 def build_model():
+    """Prepare Model using Sklearn Pipeline and grid search
+    Input: None
+    Output: Model"""
     pipeline = Pipeline([('text_pipline', Pipeline([
                                             ('vect', CountVectorizer(tokenizer= tokenize)),
                                             ('tfidf', TfidfTransformer())])),
@@ -57,13 +66,16 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """Evaluate preformance of the model
+    Input: model, testinput, test target, classes"""
     y_pred = model.predict(X_test)
     for index, column in enumerate(Y_test):
         print(column, classification_report(Y_test[column], y_pred[:, index]))
 
 
 def save_model(model, model_filepath):
-    
+    """Save the model in pickle file
+    Input: Model, filepath"""
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
