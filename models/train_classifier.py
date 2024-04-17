@@ -15,6 +15,7 @@ from sklearn.model_selection import GridSearchCV
 import pickle
 
 nltk.download('wordnet')
+nltk.download('stopwords')
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
 

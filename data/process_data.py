@@ -38,22 +38,23 @@ def clean_data(df):
         categories[column] = categories[column].astype(str).str[-1:]
         
         # # convert column from string to numeric
-        # categories[column] = categories[column].astype('Int8')
+        categories[column] = categories[column].astype('Int8')
 
     #drop rows where column values are 2
     categories = categories[categories['related']!=2]
     
     #convert column to bool
     categories = categories.astype(bool)
-
     # drop the original categories column from `df`
     df = df.drop(labels=['categories'], axis=1) 
 
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df, categories], axis=1)
-
+    df = df.drop(columns=['original'])
     # drop duplicates
     df = df.drop_duplicates() 
+    df = df.dropna()
+    
     return df
 
 
@@ -75,10 +76,8 @@ def main():
         print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
         df = load_data(messages_filepath, categories_filepath)
-
         print('Cleaning data...')
         df = clean_data(df)
-        
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
         save_data(df, database_filepath)
         

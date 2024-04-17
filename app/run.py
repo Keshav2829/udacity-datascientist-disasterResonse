@@ -46,34 +46,53 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     graph_data = []
     genre_counts_df = df.groupby('genre').count()
-    
-    for col in genre_counts_df.columns:
-        
-        genre_names = list(genre_counts_df[col].index)
-        genre_counts = genre_counts_df[col].values
-    
+    genre_names = list(genre_counts_df['message'].index)
+    genre_counts = genre_counts_df['message'].values
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
-        graphs = {
-                'data': [
-                    Bar(
-                        x=genre_names,
-                        y=genre_counts
-                    )
-                ],
+    print(df.head())
+    graphs = {
+            'data': [
+                Bar(
+                    x=genre_names,
+                    y=genre_counts
+                )
+            ],
 
-                'layout': {
-                    'title': f'Distribution of {col} Genres',
-                    'yaxis': {
-                        'title': "Count"
-                    },
-                    'xaxis': {
-                        'title': "Genre"
-                    }
+            'layout': {
+                'title': 'Distribution of Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
                 }
             }
-        graph_data.append(graphs)
-    
+        }
+    graph_data.append(graphs)    
+        
+    categories_col = df.columns[4:]
+    categories_df = df[categories_col].astype(bool)
+    top_10 = categories_df.sum(axis=0).sort_values(ascending=False)[:10].to_dict()
+    graphs = {
+            'data': [
+                Bar(
+                    x=list(top_10.keys()),
+                    y=list(top_10.values())
+                )
+            ],
+
+            'layout': {
+                'title': 'Top 10 Responses',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Respose"
+                }
+            }
+        }
+    graph_data.append(graphs)
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graph_data)]
     graphJSON = json.dumps(graph_data, cls=plotly.utils.PlotlyJSONEncoder)
